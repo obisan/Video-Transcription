@@ -1,0 +1,4 @@
+[server]
+# Streamlit defaults are 200 MB. Values are megabytes.
+maxUploadSize = 10240
+maxMessageSize = 10240

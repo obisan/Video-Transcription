@@ -30,6 +30,7 @@ from utils import (
     export_to_markdown, export_to_json
 )
 from database import TranscriptionDB
+from mailer import email_transcript_to_client, load_smtp_settings, save_smtp_settings, send_test_email
 import ai_persona
 from video_player import render_interactive_player, render_simple_transcript_with_timestamps, render_transcript_with_speakers
 from task_presets import (
@@ -123,9 +124,71 @@ def load_settings():
         print(f"Error loading settings: {str(e)}")
         return False
 
+def _smtp_form_settings() -> dict:
+    security = st.session_state.get("smtp_security", "STARTTLS")
+    username = st.session_state.get("smtp_user", "").strip()
+    from_addr = st.session_state.get("smtp_from", "").strip() or username
+    return {
+        "host": st.session_state.get("smtp_host", "").strip(),
+        "port": int(st.session_state.get("smtp_port") or 587),
+        "username": username,
+        "password": st.session_state.get("smtp_password", ""),
+        "from_addr": from_addr,
+        "use_tls": security == "STARTTLS",
+        "use_ssl": security == "SSL",
+    }
+
+
+def render_email_settings():
+    """Sidebar form for the SMTP server that delivers transcripts."""
+    saved = load_smtp_settings()
+    if "smtp_host" not in st.session_state:
+        st.session_state.smtp_host = saved["host"]
+        st.session_state.smtp_port = int(saved["port"])
+        st.session_state.smtp_user = saved["username"]
+        st.session_state.smtp_password = saved["password"]
+        st.session_state.smtp_from = saved["from_addr"]
+        st.session_state.smtp_security = "SSL" if saved.get("use_ssl") else "STARTTLS"
+
+    with st.sidebar.expander("✉️ Email", expanded=False):
+        st.caption(
+            "После расшифровки текст уходит на email выбранного клиента. "
+            "Пароль сохраняется в data/smtp.json на этом компьютере."
+        )
+        st.text_input("SMTP host", key="smtp_host", help="Например smtp.yandex.ru или smtp.gmail.com")
+        st.number_input("Port", min_value=1, max_value=65535, step=1, key="smtp_port")
+        st.selectbox("Security", options=["STARTTLS", "SSL"], key="smtp_security")
+        st.text_input("Username", key="smtp_user")
+        st.text_input("Password", type="password", key="smtp_password")
+        st.text_input("From", key="smtp_from", help="Адрес отправителя. Обычно совпадает с Username.")
+
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("Save email", use_container_width=True):
+                try:
+                    save_smtp_settings(_smtp_form_settings())
+                    st.success("Email settings saved")
+                except Exception as exc:
+                    st.error(f"Could not save email settings: {exc}")
+        with col2:
+            if st.button("Send test", use_container_width=True):
+                settings = _smtp_form_settings()
+                try:
+                    save_smtp_settings(settings)
+                except Exception as exc:
+                    st.error(f"Could not save email settings: {exc}")
+                else:
+                    ok, message = send_test_email(settings, settings["from_addr"])
+                    if ok:
+                        st.success(message)
+                    else:
+                        st.error(message)
+
 def render_sidebar_settings():
     """Render Ollama settings in the sidebar."""
-    
+
+    render_email_settings()
+
     # Ollama API settings in a collapsible section
     with st.sidebar.expander("🤖 AI Settings", expanded=False):
         st.subheader("Ollama Configuration")
@@ -556,6 +619,7 @@ def render_batch_upload(db: TranscriptionDB, client_id: int):
                 st.rerun()
 
     st.markdown("---")
+    st.caption("A finished transcript is emailed to the selected client when SMTP is saved under Email.")
 
     # File uploader with multiple files
     uploaded_files = st.file_uploader(
@@ -1395,7 +1459,7 @@ def render_transcription_interface():
 
         # Large file upload section
         uploaded_file = st.file_uploader(
-            "Choose a video or audio file (supports large files up to 2 GB)", 
+            "Choose a video or audio file (supports large files up to 10 GB)", 
             type=['mp4', 'avi', 'mov', 'mkv', 'm4a'],
             accept_multiple_files=False
         )
@@ -1410,6 +1474,11 @@ def render_transcription_interface():
                 options=["None"] + list(get_available_languages().keys()),
                 key="translation_language"
             )
+        send_email = st.checkbox(
+            "Email the transcript to this client",
+            value=True,
+            help="Uses the email saved on the selected client",
+        )
 
         # Speaker diarization settings
         col3, col4 = st.columns(2)
@@ -1471,6 +1540,19 @@ def render_transcription_interface():
 
                     # Display results
                     if transcription:
+                        if send_email:
+                            mailed, mail_message = email_transcript_to_client(
+                                client_id,
+                                uploaded_file.name,
+                                transcription,
+                                translated_text=translated_text,
+                                target_language=target_language,
+                            )
+                            if mailed:
+                                st.success(mail_message)
+                            else:
+                                st.warning(mail_message)
+
                         if speaker_segments:
                             num_detected = len(set(s.speaker for s in speaker_segments))
                             st.success(f"Transcription completed successfully! Detected {num_detected} speakers.")
@@ -1567,7 +1649,7 @@ def render_transcription_interface():
                         if translated_text:
                             with result_tabs[1]:
                                 st.text_area(f"Translation ({languages[target_language]})", translated_text, height=300)
-                        
+
                         with result_tabs[-1]:
                             render_persona_chat(db, transcription_id, transcription, context="upload")
                 

@@ -1,305 +1,221 @@
 [![Version](https://img.shields.io/github/v/release/marc-shade/VIdeo-Transcription?style=flat-square)](https://github.com/marc-shade/VIdeo-Transcription/releases)
-[![Stars](https://img.shields.io/github/stars/marc-shade/VIdeo-Transcription?style=flat-square)](https://github.com/marc-shade/VIdeo-Transcription/stargazers)
-[![Forks](https://img.shields.io/github/forks/marc-shade/VIdeo-Transcription?style=flat-square)](https://github.com/marc-shade/VIdeo-Transcription/network/members)
 [![License](https://img.shields.io/github/license/marc-shade/VIdeo-Transcription?style=flat-square)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.10+-blue?style=flat-square&logo=python&logoColor=white)](https://www.python.org)
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)](https://streamlit.io)
 [![Ollama](https://img.shields.io/badge/Ollama-000000?style=flat-square&logo=ollama&logoColor=white)](https://ollama.ai)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white)](https://www.docker.com/)
 
-<img src="https://github.com/marc-shade/VIdeo-Transcription/blob/main/assets/dragon.png" align="right" style="width: 300px;" />
-# 🎥 AI Video Transcription with Persona Generation
+## Уже настроено — просто запустить
 
-A powerful video transcription tool that not only transcribes videos but also generates AI personas that can engage in conversations about the content. Built with Streamlit and powered by Ollama for local AI processing.
+Docker Desktop запущен, образ собран, модель `qwen3.8:latest` скачана.
 
-## 🎬 Quick Demo (2 Minutes to First Result!)
+1. PowerShell, окно не закрывать:
 
-### Try It Now
-
-1. **Start the app** (choose one):
-   ```bash
-   # Option A: Docker (recommended)
-   docker compose up -d && open http://localhost:8501
-
-   # Option B: Local
-   ollama serve && streamlit run main.py
-   ```
-
-2. **Upload a sample video** - Use any of these public domain sources:
-   - [Internet Archive](https://archive.org/details/movies) - Free public domain videos
-   - [Pexels](https://www.pexels.com/videos/) - Free stock videos
-   - [Pixabay](https://pixabay.com/videos/) - Free video clips
-   - Or use any `.mp4`, `.mov`, `.mkv`, `.avi` file you have
-
-3. **Watch the magic happen**:
-   - Video uploads → Audio extraction → Whisper transcription
-   - Click "Generate Persona" → AI analyzes speaking patterns
-   - Chat with your new AI persona about the content!
-
-### Sample Workflow
-
-```
-📹 Upload Video → 🎵 Extract Audio → 📝 Transcribe with Whisper
-                                            ↓
-💬 Chat with Persona ← 🤖 Generate AI Persona ← 🌐 Translate (optional)
-                                            ↓
-                                    📥 Export (SRT/VTT/MD/JSON/TXT)
-```
-
-### What You'll See
-
-| Step | Time | Description |
-|------|------|-------------|
-| Upload | ~5s | Drag & drop any video file |
-| Transcription | ~30s-2min | Whisper processes audio |
-| Persona Generation | ~10s | AI analyzes speech patterns |
-| Chat | Instant | Converse with your new persona |
-
-## ✨ Features
-
-- 🎬 Video to text transcription using Whisper
-- ▶️ **Interactive video player with clickable timestamps** - Click any timestamp to jump to that position in the video
-- 🔍 **Search within transcripts** - Find and highlight specific text with instant filtering
-- 🌐 Multi-language translation support
-- 🤖 AI persona generation from transcripts
-- 💬 Interactive chat with generated personas
-- 🔄 Dynamic model selection from local Ollama installation
-- 📊 Client and transcription management
-- 🔒 Local AI processing with Ollama
-- 📥 Multiple export formats (SRT, VTT, Markdown, JSON, TXT)
-- 🐳 Docker Compose for one-command deployment
-
-## 🚀 Recent Updates
-
-- **NEW:** Interactive video player with click-to-seek timestamps
-- **NEW:** Transcript search with text highlighting
-- **NEW:** Auto-scroll to current playback position
-- **NEW:** Docker Compose packaging for one-command deployment
-- **NEW:** Export to SRT, VTT, Markdown, JSON, and TXT formats
-- **NEW:** Quick demo section with 2-minute workflow
-- Added dynamic Ollama model selection
-- Improved persona generation and chat interface
-- Added ability to regenerate personas
-- Enhanced error handling and feedback
-- Improved database management with migrations
-
-## 🛠️ Prerequisites
-
-1. Python 3.10 or higher
-2. FFmpeg installed on your system
-3. [Ollama](https://ollama.ai/) installed and running
-4. At least one Ollama model pulled (e.g., `ollama pull mistral:instruct`)
-
-## 📦 Setup and Installation
-
-### Prerequisites
-- Python 3.10+
-- pip or conda
-- FFmpeg
-
-### Virtual Environment Setup
-
-#### Using venv (Python's built-in virtual environment)
-```bash
-# Create a virtual environment
-python3 -m venv venv
-
-# Activate the virtual environment
-# On macOS/Linux:
-source venv/bin/activate
-# On Windows:
-venv\Scripts\activate
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-#### Using Conda
-```bash
-# Create a new conda environment
-conda create -n video-transcription python=3.11
-
-# Activate the environment
-conda activate video-transcription
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Optional: Install additional conda-specific packages if needed
-conda install ffmpeg
-```
-
-### System Dependencies
-- **FFmpeg**: Required for audio/video processing
-  - macOS: `brew install ffmpeg`
-  - Ubuntu/Debian: `sudo apt-get install ffmpeg`
-  - Windows: Download from [FFmpeg official site](https://ffmpeg.org/download.html)
-
-### 🐳 Docker Quickstart (Recommended)
-
-The easiest way to get started is with Docker Compose, which handles all dependencies automatically:
-
-```bash
-# Clone the repository
-git clone https://github.com/marc-shade/VIdeo-Transcription.git
-cd VIdeo-Transcription
-
-# Start everything with one command
-docker compose up -d
-
-# Wait for services to be ready (first run downloads models)
-docker compose logs -f ollama-init
-
-# Access the application
-open http://localhost:8501
-```
-
-**What's included:**
-- Streamlit application with all Python dependencies
-- FFmpeg for audio/video processing
-- Whisper model pre-downloaded
-- Ollama with mistral:instruct model
-- Persistent volumes for data and models
-
-**Docker Commands:**
-```bash
-# Start services
-docker compose up -d
-
-# View logs
-docker compose logs -f app
-
-# Stop services
-docker compose down
-
-# Rebuild after code changes
-docker compose up -d --build
-
-# Reset everything (removes volumes)
-docker compose down -v
-```
-
-**Environment Variables:**
-Create a `.env` file to customize:
-```env
-OLLAMA_API_BASE=http://ollama:11434
-DEFAULT_MODEL=mistral:instruct
-```
-
-## 🚀 Usage
-
-1. Start the Ollama server:
-```bash
+```powershell
+$env:OLLAMA_HOST="0.0.0.0:11434"
 ollama serve
 ```
 
-2. Run the application:
-```bash
-streamlit run main.py
+2. Второе окно, каталог проекта:
+
+```powershell
+cd D:\Projects\VIdeo-Transcription
+docker compose up -d
 ```
 
-3. Access the web interface at `http://localhost:8501`
+3. Браузер: [http://localhost:8501](http://localhost:8501)
 
-## 💡 Features in Detail
+В сайдбаре модель `qwen3.8:latest`. Дальше **Upload & Transcribe**.
 
-### Video Transcription
-- Upload video files
-- Automatic transcription using Whisper
-- Optional timestamp inclusion
-- Support for multiple video formats
+Выключить:
 
-### Translation
-- Translate transcriptions to multiple languages
-- Powered by deep-translator
-- Maintains formatting and structure
+```powershell
+cd D:\Projects\VIdeo-Transcription
+docker compose down
+```
 
-### AI Persona Generation
-- Analyzes speaking patterns and content
-- Creates context-aware personas
-- Generates detailed system prompts
-- Supports multiple Ollama models
-- Regenerate personas as needed
+В окне с `ollama serve` нажмите `Ctrl+C`. База в `data\` остаётся.
 
-### Interactive Chat
-- Chat with generated personas
-- Context-aware responses
-- Maintains chat history
-- Real-time response generation
+---
 
-## 🔧 Configuration
+# AI Video Transcription
 
-The application uses several environment variables that can be set in a `.env` file:
+Форк [marc-shade/VIdeo-Transcription](https://github.com/marc-shade/VIdeo-Transcription).
+
+Streamlit-приложение транскрибирует видео через Whisper и строит AI-персоны по расшифровке. В этом форке контейнер приложения подключается к **уже запущенному Ollama на Windows**, модель по умолчанию — `qwen3.8:latest`. Отдельный контейнер Ollama не поднимается.
+
+```
+Видео → аудио (FFmpeg) → текст (Whisper) → персона и чат (Ollama / Qwen)
+                                              ↓
+                                    экспорт SRT / VTT / MD / JSON / TXT
+```
+
+## Проверенная конфигурация
+
+- Windows, Docker Desktop
+- Ollama слушает порт `11434`
+- Модель `qwen3.8:latest` (около 17 ГБ)
+- Каталог моделей: `D:\LLM\ollama\models`
+- Приложение: `http://localhost:8501`
+
+## Что изменено относительно upstream
+
+Правки уже в репозитории. Повторно править файлы перед запуском не нужно.
+
+| Место | Зачем |
+| --- | --- |
+| `docker-compose.yml` | Только сервис `app`. `OLLAMA_API_BASE=http://host.docker.internal:11434`, `DEFAULT_MODEL=qwen3.8:latest`, база в `/app/data/transcription.db` |
+| `main.py` | Проверка Ollama и настройки по умолчанию смотрят на `host.docker.internal:11434` и `qwen3.8:latest`. Внутри контейнера `localhost:11434` — это сам контейнер, не хост |
+| `database.py`, `batch_processor.py` | Путь к SQLite берётся из `DATABASE_PATH`. Файл лежит в смонтированном `./data`, куда у процесса есть право записи |
+
+`host.docker.internal` резолвится Docker Desktop в адрес хоста. Так контейнер достучится до Ollama на Windows.
+
+## Запуск
+
+### 1. Ollama на всех интерфейсах
+
+Контейнер ходит на хост по сети. Ollama должен слушать `0.0.0.0:11434`, а не только `127.0.0.1`.
+
+Остановите текущий процесс Ollama, если он уже запущен. В отдельном окне PowerShell:
+
+```powershell
+$env:OLLAMA_HOST="0.0.0.0:11434"
+ollama serve
+```
+
+Если Windows Firewall спросит доступ, разрешите его для частных сетей. Это окно оставьте открытым.
+
+Проверка:
+
+```powershell
+netstat -ano | Select-String ":11434"
+```
+
+В выводе должны быть `0.0.0.0:11434` и `[::]:11434` в состоянии `LISTENING`.
+
+Модель, если её ещё нет:
+
+```powershell
+ollama pull qwen3.8:latest
+```
+
+### 2. Сборка и запуск контейнера
+
+Docker Desktop должен быть запущен. В каталоге проекта:
+
+```powershell
+docker compose up -d --build
+```
+
+Первая сборка скачивает образ Python и модель Whisper `base` внутрь образа. Это занимает заметно больше времени, чем повторный старт.
+
+Статус:
+
+```powershell
+docker compose ps
+```
+
+Ожидаемый статус: `Up (healthy)`.
+
+### 3. Связь контейнера с Ollama
+
+```powershell
+docker exec video-transcription curl -s http://host.docker.internal:11434/api/tags
+```
+
+В JSON должен быть тег `qwen3.8:latest`. Пустой ответ или ошибка соединения значит, что Ollama не слушает `0.0.0.0:11434` или файрвол режет доступ с Docker-сети.
+
+### 4. Первый прогон в браузере
+
+1. Откройте `http://localhost:8501`.
+2. В блоке **Add New Client** создайте клиента: имя, email, **Add Client**.
+3. Раскройте **AI Settings** и проверьте модель `qwen3.8:latest`. Если выбрана другая — выберите эту и нажмите **Save Settings**.
+4. На вкладке **Upload & Transcribe** загрузите короткое видео (до 2 минут), включите таймкоды и нажмите **Transcribe to Text**.
+
+Whisper `base` уже в образе. Первый анализ через Qwen дольше следующих: Ollama загружает модель в видеопамять. На проверенной машине это RX 7900 XT, первый проход занимает несколько минут.
+
+## Команды
+
+```powershell
+docker compose up -d          # старт
+docker compose logs -f app    # логи приложения
+docker compose ps             # статус и healthcheck
+docker compose up -d --build  # пересборка после правок кода
+docker compose down           # остановка
+```
+
+`docker compose down` не удаляет `./data`. База `data/transcription.db` остаётся на диске.
+
+## Почта клиенту
+
+После расшифровки текст уходит на email выбранного клиента. На вкладке **Upload & Transcribe** за это отвечает галочка **Email the transcript to this client** (включена по умолчанию). Пакетная очередь шлёт письмо сама.
+
+Сервер исходящей почты задаётся в сайдбаре, блок **Email**:
+
+1. SMTP host, порт и тип защиты.
+2. Username, пароль и адрес From (обычно тот же, что Username).
+3. **Save email**, затем **Send test**. Тестовое письмо приходит на From.
+
+Пароль пишется в `data/smtp.json` и в git не попадает. Ошибка отправки не стирает расшифровку: текст остаётся в базе, в интерфейсе будет предупреждение.
+
+| Почта | Host | Порт | Защита |
+| --- | --- | --- | --- |
+| Яндекс | `smtp.yandex.ru` | 465 | SSL |
+| Gmail | `smtp.gmail.com` | 587 | STARTTLS |
+
+Нужен пароль приложения, обычный пароль от ящика почтовый сервер не примет. Письмо клиенту: тема «Расшифровка: имя файла», текст расшифровки во вложении `.txt`. Если выбран перевод, он уходит вторым вложением.
+
+Те же поля можно задать переменными `SMTP_HOST`, `SMTP_PORT`, `SMTP_USERNAME`, `SMTP_PASSWORD`, `SMTP_FROM`, `SMTP_SECURITY` (`STARTTLS` или `SSL`). Сохранённый `smtp.json` их перекрывает.
+
+## Переменные окружения
+
+Заданы в `docker-compose.yml`:
 
 ```env
-OLLAMA_API_BASE=http://localhost:11434
-DEFAULT_MODEL=mistral:instruct
+OLLAMA_API_BASE=http://host.docker.internal:11434
+DEFAULT_MODEL=qwen3.8:latest
+STREAMLIT_SERVER_PORT=8501
+DATABASE_PATH=/app/data/transcription.db
 ```
 
-## 📝 Database Schema
+Смена модели в интерфейсе пишется в `settings.json` внутри контейнера и переживает перезапуск сессии, пока контейнер не пересоздан без этого файла. Значения в сайдбаре имеют приоритет над дефолтом из кода.
 
-The application uses SQLite with the following main tables:
-- clients: Store client information
-- transcriptions: Store video transcriptions
-- persona_prompts: Store generated AI personas
+Чтобы взять другую уже скачанную модель, поменяйте `DEFAULT_MODEL` и дефолт `model` в `main.py` (`initialize_session_state` и сброс настроек в сайдбаре), затем пересоберите образ.
 
-## 📁 Project Structure
+## Возможности
+
+- Транскрибация видео через Whisper
+- Плеер с переходом по таймкоду
+- Поиск по тексту расшифровки
+- Перевод расшифровки
+- Генерация AI-персоны и чат с ней через локальный Ollama
+- Выбор модели из списка, который отдаёт Ollama
+- Клиенты и история расшифровок в SQLite
+- Экспорт в SRT, VTT, Markdown, JSON, TXT
+
+## Структура
 
 ```
-video_transcription/
-├── main.py             # Primary Streamlit application
-├── database.py         # Database management
-├── utils.py            # Audio/video processing utilities
-├── ai_persona.py       # AI persona generation
-├── requirements.txt    # Project dependencies
-├── Dockerfile          # Docker image definition
-├── docker-compose.yml  # Multi-container orchestration
-├── .dockerignore       # Docker build exclusions
-└── README.md           # Project documentation
+VIdeo-Transcription/
+├── main.py              # Streamlit-интерфейс
+├── database.py          # SQLite
+├── batch_processor.py   # пакетная очередь
+├── utils.py             # аудио и Whisper
+├── ai_persona.py        # персона и запросы к Ollama
+├── docker-compose.yml   # сервис app → Ollama на хосте
+├── Dockerfile
+├── requirements.txt
+└── data/                # transcription.db (том контейнера)
 ```
 
-### Key Components
-- **main.py**: Central Streamlit interface for video transcription
-- **database.py**: SQLite database operations for clients and transcripts
-- **utils.py**: Core utility functions for audio extraction and transcription
-- **ai_persona.py**: AI-powered persona analysis and generation
+Таблицы SQLite: `clients`, `transcriptions`, `persona_prompts`.
 
-## 🤝 Contributing
+## Если что-то не стартует
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+**Контейнер не видит Ollama.** Повторите шаг 1 и проверку `curl` из шага 3. Адрес в логах и в сайдбаре должен быть `http://host.docker.internal:11434`. `http://localhost:11434` из контейнера до хоста не доходит.
 
-## 📄 License
+**`permission denied` на базу.** Путь должен быть `/app/data/transcription.db`, каталог `./data` смонтирован в `/app/data`. Так задано в `docker-compose.yml` и в `database.py`.
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+**Healthcheck долго в `starting`.** После `--build` приложение поднимается не сразу. Подождите `start_period` и посмотрите `docker compose logs -f app`.
 
-## 🙏 Acknowledgments
-
-- OpenAI Whisper for transcription
-- Ollama for local AI processing
-- Streamlit for the web interface
-- All other open-source contributors
-
-## Troubleshooting
-
-### PyArrow Installation Issues
-
-If you encounter problems installing PyArrow (a Streamlit dependency), try the following:
-
-1. Use pre-built wheels:
-```bash
-pip install --only-binary=:all: pyarrow
-```
-
-2. If you're on an older system or experiencing build errors, you can:
-   - Upgrade pip and setuptools
-   - Install build dependencies
-   - Try specifying a specific version
-
-Example:
-```bash
-pip install --upgrade pip setuptools wheel
-pip install "pyarrow[build]"
-# Or specify an exact version
-pip install pyarrow==14.0.2
-```
-
-Note: PyArrow can be sensitive to system configurations and Python versions. The pre-built wheel method is often the most reliable.
+**Модель не в списке.** `ollama list` на хосте должен показать `qwen3.8:latest`. Имя в UI совпадает с тегом Ollama, включая `:latest`.

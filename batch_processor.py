@@ -468,6 +468,13 @@ def process_video_job(file_path: str, filename: str, client_id: int,
         )
         progress_callback(100)
 
+        from mailer import email_transcript_to_client
+        mailed, mail_message = email_transcript_to_client(
+            client_id, filename, transcription_text
+        )
+        if not mailed:
+            print(f"Email not sent for {filename}: {mail_message}")
+
         # Clean up audio file
         try:
             if audio_path and os.path.exists(audio_path):
