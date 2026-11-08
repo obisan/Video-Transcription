@@ -44,7 +44,10 @@ class BatchJob:
 class BatchJobQueue:
     """Manages the job queue for batch video processing."""
 
-    def __init__(self, db_path: str = "transcription.db"):
+    def __init__(self, db_path: str = None):
+        if db_path is None:
+            db_path = os.getenv("DATABASE_PATH", "transcription.db")
+        self.db_path = db_path
         self.db_path = db_path
         self._create_job_table()
         self._job_queue = queue.Queue()
@@ -488,13 +491,13 @@ def process_video_job(file_path: str, filename: str, client_id: int,
 _batch_queue: Optional[BatchJobQueue] = None
 
 
-def get_batch_queue(db_path: str = "transcription.db") -> BatchJobQueue:
-    """Get or create the singleton batch job queue."""
+def get_batch_queue(db_path: str = None) -> BatchJobQueue:
     global _batch_queue
     if _batch_queue is None:
+        if db_path is None:
+            db_path = os.getenv("DATABASE_PATH", "transcription.db")
         _batch_queue = BatchJobQueue(db_path)
     return _batch_queue
-
 
 def start_batch_processing(db_path: str = "transcription.db", max_concurrent: int = 1):
     """Start batch processing with the given configuration."""

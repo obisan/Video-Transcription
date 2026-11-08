@@ -72,8 +72,8 @@ def initialize_session_state():
     
     # Default settings
     default_settings = {
-        'api_base': "http://localhost:11434",
-        'model': "mistral:instruct",
+        'api_base': "http://host.docker.internal:11434",
+        'model': "qwen3.8:latest",
         'temperature': 0.7,
         'top_p': 0.9,
         'top_k': 40,
@@ -234,8 +234,8 @@ def render_sidebar_settings():
         with col2:
             if st.button("🔄 Reset Defaults"):
                 st.session_state.ollama_settings = {
-                    'api_base': "http://localhost:11434",
-                    'model': "mistral:instruct",
+                    'api_base': "http://host.docker.internal:11434",
+                    'model': "qwen3.8:latest",
                     'temperature': 0.7,
                     'top_p': 0.9,
                     'top_k': 40,
@@ -373,7 +373,7 @@ def check_environment():
     """Check if all required environment variables are set."""
     try:
         # Check if Ollama is running by making a test request
-        response = requests.get("http://localhost:11434/api/version")
+        response = requests.get("http://host.docker.internal:11434/api/version")
         if response.status_code != 200:
             st.error("❌ Ollama server is not running. Please start Ollama first.")
             st.stop()

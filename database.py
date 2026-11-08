@@ -3,8 +3,10 @@ from typing import Optional, List, Tuple
 import os
 
 class TranscriptionDB:
-    def __init__(self, db_path: str = "transcription.db"):
+    def __init__(self, db_path: str = None):
         """Initialize the database connection."""
+        if db_path is None:
+            db_path = os.getenv("DATABASE_PATH", "transcription.db")
         self.db_path = db_path
         self._create_tables()
         self._migrate_database()
